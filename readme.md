@@ -5,7 +5,7 @@
 - **How does your script work?**  
 _It makes an API call to the provided ripple server, gets the  relevant information from the response and also the current local time and writes these two values to a .csv file_
 - **How did you decide on your polling interval?**  
-_I observed that normally it takes 3 seconds to have a new sequence number._
+_I used 1s interval because during the tests I observed that normally it takes 3 seconds to have a new sequence number._
 - **What do the results tell you?**  
 _That a validation takes around 3s to happen._
 - **What might explain the variation in time between new ledgers?**  
