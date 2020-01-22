@@ -1,4 +1,4 @@
-tmp_time = 0
-delta = 0
+tmp_time = None
+tmp_seq = None
 exec_times = []
 MAX = 10

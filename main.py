@@ -6,7 +6,7 @@ import os
 import var
 
 tl = Timeloop()
-global count
+
 count = 0
 
 
@@ -15,10 +15,13 @@ def run_job():
     """
     Function that runs the all the routine with the periodicity specified in the decorator
     """
+
     global count
     r = Ripple()
+    print('\nProcess started\n') if count == 0 else print('-----')
     response = r.get_server_info()
     values = r.get_values(response)
+    print('API call number: ', count+1)
     r.calculate_time(values, count)
     r.write_csv(values)
     count += 1
@@ -28,7 +31,6 @@ def run_job():
 
 
 if __name__ == '__main__':
-    print('Starting job')
     tl.start(block=True)
 
 

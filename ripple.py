@@ -55,30 +55,44 @@ class Ripple:
 
     @staticmethod
     def calculate_time(values, count):
-        zero = timedelta(hours=0, minutes=0, seconds=0)
-        sum_times = timedelta(hours=0, minutes=0, seconds=0)
+        """Calculates the time diff between the ledger's validations
+
+        :param values: Parsed information extracted from the API call
+        :param count: counter to limit the job execution times. It's used in this function to determine when to
+                      calculate the avg time and show the results.
+        """
+        zero = timedelta(hours=0, minutes=0, seconds=0, microseconds=00000)
+        sum_times = zero
+        # current_time, delta, current_seq = None, None, None
 
         if count < 1:
-            var.tmp_time = timedelta(hours=float(values['h']), minutes=float(values['m']),
-                                     seconds=float(values['s']), microseconds=float(values['ms']))
+            var.tmp_time = timedelta(hours=values['h'], minutes=values['m'],
+                                     seconds=values['s'], microseconds=values['ms'])
+            var.tmp_seq = values['seq']
         else:
-            current_time = timedelta(hours=float(values['h']), minutes=float(values['m']),
-                                     seconds=float(values['s']), microseconds=float(values['ms']))
+            current_time = timedelta(hours=values['h'], minutes=values['m'],
+                                     seconds=values['s'], microseconds=values['ms'])
+            current_seq = values['seq']
 
-            var.delta = current_time - var.tmp_time
+            if current_seq != var.tmp_seq:
+                delta = current_time - var.tmp_time
 
-            if var.delta != zero:
-                var.exec_times.append(var.delta)
+                if delta != zero:
+                    var.exec_times.append(delta)
 
-            var.tmp_time = current_time
+                var.tmp_time = current_time
+                var.tmp_seq = current_seq
 
-            if count == var.MAX - 1:
-                var.exec_times.sort()
-                print('Max time: ', var.exec_times[-1])
-                print('Min time: ', var.exec_times[0])
-                for x in var.exec_times:
-                    sum_times += x
-                print('Avg time: ', sum_times / len(var.exec_times))
+        if count == var.MAX - 1:
+            var.exec_times.sort()
+            print(var.exec_times)
+            print('-----')
+            print('Max time: ', var.exec_times[-1])
+            print('Min time: ', var.exec_times[0])
+            for x in var.exec_times:
+                sum_times += x
+            print('Avg time: ', sum_times / len(var.exec_times))
+            print('-----')
 
     @staticmethod
     def write_csv(values):
