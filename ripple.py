@@ -63,7 +63,6 @@ class Ripple:
         """
         zero = timedelta(hours=0, minutes=0, seconds=0, microseconds=00000)
         sum_times = zero
-        # current_time, delta, current_seq = None, None, None
 
         if count < 1:
             var.tmp_time = timedelta(hours=values['h'], minutes=values['m'],
