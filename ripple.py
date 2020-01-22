@@ -1,9 +1,11 @@
+from datetime import timedelta, datetime
+import var
 import requests
 import csv
-import time
 
 
 class Ripple:
+
     @staticmethod
     def get_server_info():
         """
@@ -34,16 +36,49 @@ class Ripple:
         info = response['result']['info']
         validated_ledger = info['validated_ledger']
         raw_time = info['time']
-        time_tmp = str.split(raw_time, ' ')
-        time_tmp = str.split(time_tmp[1], '.')
-        t = time_tmp[0]
+        date_time, exact_time = str.split(raw_time, ' ')
+        h_time, ms = str.split(exact_time, '.')
+        h, m, s = str.split(h_time, ':')
+        t = h_time
         # lt = time.localtime()
 
         values = {
             "seq": validated_ledger['seq'],
-            "current_time": t  # To use cur. local time, uncomment the 'lt' var and use time.strftime("%H:%M:%S", lt)
+            "current_time": t,  # To use cur. local time, uncomment the 'lt' var and use time.strftime("%H:%M:%S", lt)
+            # "exact_time": datetime.strptime(exact_time, '%H:%M:%S.%f').time(),
+            "h": float(h),
+            "m": float(m),
+            "s": float(s),
+            "ms": float(ms)
         }
         return values
+
+    @staticmethod
+    def calculate_time(values, count):
+        zero = timedelta(hours=0, minutes=0, seconds=0)
+        sum_times = timedelta(hours=0, minutes=0, seconds=0)
+
+        if count < 1:
+            var.tmp_time = timedelta(hours=float(values['h']), minutes=float(values['m']),
+                                     seconds=float(values['s']), microseconds=float(values['ms']))
+        else:
+            current_time = timedelta(hours=float(values['h']), minutes=float(values['m']),
+                                     seconds=float(values['s']), microseconds=float(values['ms']))
+
+            var.delta = current_time - var.tmp_time
+
+            if var.delta != zero:
+                var.exec_times.append(var.delta)
+
+            var.tmp_time = current_time
+
+            if count == var.MAX - 1:
+                var.exec_times.sort()
+                print('Max time: ', var.exec_times[-1])
+                print('Min time: ', var.exec_times[0])
+                for x in var.exec_times:
+                    sum_times += x
+                print('Avg time: ', sum_times / len(var.exec_times))
 
     @staticmethod
     def write_csv(values):
