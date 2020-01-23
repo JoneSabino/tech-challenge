@@ -84,7 +84,6 @@ class Ripple:
 
         if count == var.MAX - 1:
             var.exec_times.sort()
-            print(var.exec_times)
             print('-----')
             print('Max time: ', var.exec_times[-1])
             print('Min time: ', var.exec_times[0])
